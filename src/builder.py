@@ -63,32 +63,41 @@ def build_hosts_str(host):
     return '127.0.0.1 '+host['hostname'].strip()+'\n'
 
 
-def build_nginx_conf(host):
-
-    path_cert = '/etc/nginx/ssl_cert/' + host['hostname'] + '.pem'
-    path_key = '/etc/nginx/ssl_cert/' + host['hostname'] + '.key'
+def build_nginx_conf_host(host, hostname, path_cert, path_key):
 
     if host['protocol'] == 'http':
         host_config = template_http.format(
-            server_name=host['hostname'].strip(),
+            server_name=hostname,
             ip=host['target']['ip'].strip(),
             port=host['target']['port'].strip(),
         )
     elif host['protocol'] == 'https':
         host_config = template_https.format(
-            server_name=host['hostname'].strip(),
+            server_name=hostname,
             ip=host['target']['ip'].strip(),
             port=host['target']['port'].strip(),
             ssl_cert=path_cert,
             ssl_key=path_key,
         )
     else:
-        print("Unrecognized protocol @ " + host['hostname'].strip())
+        print("Unrecognized protocol @ " + hostname)
         return
 
-    text_file = open(path_build+'/conf.d/'+host['hostname'].strip()+'.'+host['protocol']+'.conf', 'x')
+    text_file = open(path_build+'/conf.d/'+hostname+'.'+host['protocol']+'.conf', 'x')
     text_file.write(host_config)
     text_file.close()
+
+
+def build_nginx_conf(host):
+
+    hostname = host['hostname'].strip()
+    path_cert = '/etc/nginx/ssl_cert/' + hostname + '.pem'
+    path_key = '/etc/nginx/ssl_cert/' + hostname + '.key'
+
+    build_nginx_conf_host(host, hostname, path_cert, path_key)
+
+    for alternativehostname in host['alternatives']:
+        build_nginx_conf_host(host, alternativehostname.strip(), path_cert, path_key)
 
 
 def build_ssl_cert(host):

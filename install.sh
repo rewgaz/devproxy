@@ -34,6 +34,7 @@ case "$LSB_DIST" in
         firewall-cmd --permanent --add-service=https
         firewall-cmd --permanent --add-service=http
         firewall-cmd --reload
+        dnf -y install certbot
     ;;
     rhel|ol|sles)
         echo "Operating system not supported."
