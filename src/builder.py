@@ -6,7 +6,7 @@ import shutil
 
 path_config = '/usr/src/http-gateway-config'
 path_build = '/usr/src/http-gateway-build'
-path_hosts = '/usr/src/http-gateway-hosts'
+path_hosts = '/usr/src/http-gateway-build/hosts'
 hosts_separator = '### http-gateway ###'
 
 template_location = '''location / {{
@@ -84,6 +84,7 @@ def build_nginx_conf(host):
         )
     else:
         print("Unrecognized protocol @ " + host['hostname'].strip())
+        return
 
     text_file = open(path_build+'/conf.d/'+host['hostname'].strip()+'.'+host['protocol']+'.conf', 'x')
     text_file.write(host_config)
@@ -107,21 +108,21 @@ def build_ssl_cert(host):
 
 def build():
 
-    shutil.rmtree(path_build, ignore_errors=True)
-    os.makedirs(path_build+'/conf.d/', exist_ok=True)
-    os.makedirs(path_build+'/ssl/', exist_ok=True)
-
     config = read_config()
     hosts_data = []
+
+    hosts_file = open(path_hosts, 'rt')
+    hosts_file_lines = hosts_file.readlines()
+    hosts_file.close()
+
+    shutil.rmtree(path_build, ignore_errors=True)
+    os.makedirs(path_build + '/conf.d/', exist_ok=True)
+    os.makedirs(path_build + '/ssl/', exist_ok=True)
 
     for host in config:
         build_nginx_conf(host)
         build_ssl_cert(host)
         hosts_data.append(build_hosts_str(host))
-
-    hosts_file = open(path_hosts, 'rt')
-    hosts_file_lines = hosts_file.readlines()
-    hosts_file.close()
 
     first_line_to_ignore = None
     for num, line in enumerate(hosts_file_lines, start=0):
