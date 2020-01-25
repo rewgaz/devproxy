@@ -23,21 +23,31 @@ It also opens port `80` and `443` in your firewall.
 Place a config file for each host in the `config` folder and name it for example `my-website.com.json`. Only JSON files with the suffix `.json` will be read. 
 
 #### Examples
-Config file for a website using only HTTP. `my-website.com` will be redirected to `www.my-website.com`. Incoming traffic will redirected to a host running on `0.0.0.0:18000`.
+Config file for a website using only HTTP. `my-website.com` will be redirected to `www.my-website.com`. Incoming traffic will redirected to a host running on `0.0.0.0:18010` for HTTP and to `0.0.0.0:14010` for HTTPS.
 ```json
-[
-    {
+{
+    "version": 1,
+    "host": {
         "hostname": "www.my-website.com",
         "alternatives": [
             "my-website.com"
         ],
-        "protocol": "http",
-        "target": {
-            "ip": "0.0.0.0",
-            "port": "18000"
-        }
+        "targets": [
+            {
+                "protocol": "http",
+                "ip": "0.0.0.0",
+                "port": "18010"
+            },
+            {
+                "protocol": "https",
+                "ip": "0.0.0.0",
+                "port": "14010",
+                "ssl_cert": "/etc/letsencrypt/live/www.my-website.com/fullchain.pem",
+                "ssl_key": "/etc/letsencrypt/live/www.my-website.com/privkey.pem"
+            }
+        ]
     }
-]
+}
 ```
 
 ### Setup & config renewal
