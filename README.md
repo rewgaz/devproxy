@@ -42,8 +42,8 @@ Config file for a website using only HTTP. `my-website.com` will be redirected t
                 "protocol": "https",
                 "ip": "0.0.0.0",
                 "port": "14010",
-                "ssl_cert": "/etc/letsencrypt/live/www.my-website.com/fullchain.pem",
-                "ssl_key": "/etc/letsencrypt/live/www.my-website.com/privkey.pem"
+                "ssl_cert": "/etc/letsencrypt/live/my-website.com/fullchain.pem",
+                "ssl_key": "/etc/letsencrypt/live/my-website.com/privkey.pem"
             }
         ]
     }
@@ -59,7 +59,7 @@ Rerun this script after you changed any config files or created or renewed any S
 
 ### Create a new SSL certificate
 ```bash
-sudo ./cert_create.sh www.my-website.com
+sudo ./cert_create.sh my-website.com
 ```
 Create a SSL certificate with Certbot for your host. 
 
@@ -68,3 +68,9 @@ Create a SSL certificate with Certbot for your host.
 sudo ./cert_renew.sh
 ```
 Renew all SSL certificates created with Certbot if necessary.
+
+### Use Cerbot certificate for Cockpit
+```bash
+sudo ./cert_cockpit.sh my-website.com
+```
+Configure Cockpit to use a certificate created by the `cert_create.sh` script.
