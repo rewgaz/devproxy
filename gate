@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# exit on error
+set -e
+
+# command parameter
+param_command="$1"
+
+# additional parameter 
+param_option="$2"
+
+# script base directory
+base_dir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" >/dev/null 2>&1 && pwd -P)"
+
+# load source files
+source "$base_dir/src/cli/cert.sh"
+source "$base_dir/src/cli/install.sh"
+source "$base_dir/src/cli/setup.sh"
+source "$base_dir/src/cli/util.sh"
+
+# check for a command
+if [[ -z ${param_command} ]]; then
+    echo "Please specify a command."
+    echo ""
+    print_help
+    exit 1
+fi
+
+# execute the command
+case "$param_command" in
+    "install")
+        install
+    ;;
+    "setup")
+        setup "$base_dir/src" "$base_dir/config" "$base_dir/build"
+    ;;
+    "cert:create")
+        cert_create "$param_option"
+    ;;
+    "cert:renew")
+        cert_renew
+    ;;
+    "cert:cockpit")
+        cert_cockpit "$param_option"
+    ;;
+    "help"|"--help"|"-h")
+        print_help
+        exit
+        ;;
+    *)
+        echo "Unknown command '${param_command}'."
+        print_help
+        exit 1
+    ;;
+esac
