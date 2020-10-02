@@ -1,5 +1,7 @@
 # devproxy - HTTP(S) proxy for developers
 
+[<!--lint ignore no-dead-urls-->![GitHub Actions status | rewgaz/devproxy setup](https://github.com/rewgaz/devproxy/workflows/setup/badge.svg)](https://github.com/rewgaz/devproxy/actions?workflow=setup)
+
 HTTP(S) proxy config builder - to make development with multiple containers easier.
 
 ## Preface
@@ -11,6 +13,7 @@ Working with multiple Docker containers on different projects running on port 80
 Supported operating systems:
 
 - Fedora (Tested on Fedora Server 30)
+- Ubuntu (Tested on Ubuntu 18.04)
 
 Note: Most of the commands need root privileges.
 
@@ -18,11 +21,17 @@ Note: Most of the commands need root privileges.
 
 Note: Most of the commands need root privileges.
 
-The installation script disables a potentially running `Apache Webserver`, installs `NGINX`, `Docker`, `docker-compose` and `certbot`.
+Install devproxy:
+
+```bash
+make install
+```
+
+The setup command disables a potentially running `Apache Webserver`, installs `NGINX`, `Docker`, `docker-compose` and `certbot`.
 It also opens port `80` and `443` in your firewall if necessary.
 
 ```bash
-./devproxy install
+devproxy setup
 ```
 
 ## Setup - Step 2: Host configuration
@@ -78,7 +87,7 @@ The `save` command parses all config files and creates all necessary NGINX confi
 Rerun this command after you changed any config files or added/renewed any SSL certificates.
 
 ```bash
-./devproxy save
+devproxy save
 ```
 
 ## SSL certificates
@@ -90,7 +99,7 @@ To quickly generate SSL certificates for your hosts you can use the buildin Cert
 Create a SSL certificate with Certbot for your host.
 
 ```bash
-./devproxy cert:create my-website.com
+devproxy cert:create my-website.com
 ```
 
 ### Renew SSL certificates
@@ -98,7 +107,7 @@ Create a SSL certificate with Certbot for your host.
 Renew all SSL certificates created with Certbot if necessary.
 
 ```bash
-./devproxy cert:renew
+devproxy cert:renew
 ```
 
 ### Fedora: Use Certbot certificate for Cockpit
@@ -106,5 +115,5 @@ Renew all SSL certificates created with Certbot if necessary.
 Configure Cockpit to use a certificate created by the `cert:create` command. This will override the current SSL certificate in Cockpit if present.
 
 ```bash
-./devproxy cert:cockpit.sh my-website.com
+devproxy cert:cockpit.sh my-website.com
 ```

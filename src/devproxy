@@ -13,10 +13,10 @@ param_option="$2"
 base_dir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" >/dev/null 2>&1 && pwd -P)"
 
 # load source files
-source "$base_dir/src/cli/cert.sh"
-source "$base_dir/src/cli/install.sh"
-source "$base_dir/src/cli/setup.sh"
-source "$base_dir/src/cli/util.sh"
+source "$base_dir/cli/cert.sh"
+source "$base_dir/cli/setup.sh"
+source "$base_dir/cli/save.sh"
+source "$base_dir/cli/util.sh"
 
 # check for a command
 if [[ -z ${param_command} ]]; then
@@ -28,11 +28,11 @@ fi
 
 # execute the command
 case "$param_command" in
-    "install")
-        install
-    ;;
     "setup")
-        setup "$base_dir/src" "$base_dir/config" "$base_dir/build"
+        setup
+    ;;
+    "save")
+        save "$base_dir/src" "$base_dir/config" "$base_dir/build"
     ;;
     "cert:create")
         cert_create "$param_option"

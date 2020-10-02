@@ -1,42 +1,58 @@
 setup() {
-    dir_src="$1"
-    dir_config="$2"
-    dir_build="$3"
-    distribution=$(get_distribution)
+    echo "Setup..."
 
-    mkdir -p "$dir_build"
-    \cp /etc/hosts "$dir_build"/hosts
-    \cp /etc/hosts /etc/hosts~"$(date +%s)"
+    distribution=$(get_distribution)
 
     case "$distribution" in
         centos|fedora)
             selinux_status=$(getenforce)
             if [ "$selinux_status" == "Permissive" ] || [ "$selinux_status" == "Enforcing" ]; then
-                chcon -Rt svirt_sandbox_file_t "$dir_src"
-                chcon -Rt svirt_sandbox_file_t "$dir_config"
-                chcon -Rt svirt_sandbox_file_t "$dir_build"
+                setsebool -P httpd_can_network_connect 1
             fi;
-            docker run -it --rm \
-                --name http-devproxy-builder \
-                -v "$dir_src":/usr/src/http-devproxy-src \
-                -v "$dir_config":/usr/src/http-devproxy-config \
-                -v "$dir_build":/usr/src/http-devproxy-build \
-                -w /usr/src/http-devproxy-src \
-                python:3 python builder.py
-            \cp -r "$dir_build"/conf.d /etc/nginx/
-            \cp -r "$dir_src"/html /usr/share/nginx/
-            \cp -r "$dir_build"/ssl /etc/nginx/ssl_cert
-            systemctl restart nginx
-            \cp "$dir_build"/hosts /etc/hosts
+            dnf -y update
+            dnf -y install docker cockpit-docker docker-compose nginx certbot
+            if [[ -v ${CI_TASK_RUNNER} ]]; then
+                systemctl start docker
+                systemctl enable docker
+            fi
+            if systemctl is-active httpd; then
+                systemctl stop httpd
+            fi
+            if systemctl is-enabled httpd; then
+                systemctl disable httpd
+            fi
+            systemctl start nginx
+            systemctl enable nginx
+            firewall-cmd --permanent --add-service=https
+            firewall-cmd --permanent --add-service=http
+            firewall-cmd --reload
         ;;
         rhel|ol|sles)
             echo "Operating system not supported."
+            exit 1
         ;;
         ubuntu|debian|raspbian)
-            echo "Operating system not supported."
+            apt-get update
+            apt-get -y upgrade
+            apt-get -y install docker docker-compose nginx certbot
+            if [[ -v ${CI_TASK_RUNNER} ]]; then
+                systemctl start docker
+                systemctl enable docker
+            fi
+            if systemctl is-active apache2; then
+                systemctl stop apache2
+            fi
+            if systemctl is-enabled apache2; then
+                systemctl disable apache2
+            fi
+            systemctl start nginx
+            systemctl enable nginx
         ;;
         *)
             echo "Operating system not supported."
+            exit 1
         ;;
     esac
+
+    echo "...complete!"
 }

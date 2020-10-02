@@ -1,0 +1,25 @@
+name: setup
+
+on: push
+
+jobs:
+
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo apt install make
+      
+      - name: Install application
+        run: sudo make install
+
+      - name: Initial setup
+        run: sudo devproxy setup
+        env:
+          CI_TASK_RUNNER: github
+
+      - name: Uninstall application
+        run: sudo make uninstall
