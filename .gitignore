@@ -1,2 +1,5 @@
-/build
+# ide files
 .idea
+
+# build files
+/build

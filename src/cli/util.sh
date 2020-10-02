@@ -8,7 +8,7 @@ get_distribution() {
 
 print_help() {
     echo -e "\e[94mUsage:\e[39m"
-    echo -e "  ./gate [command] ?[argument]"
+    echo -e "  ./devproxy [command] ?[argument]"
     echo -e ""
     echo -e "\e[94mCommands:\e[39m"
     echo -e "\e[96m  help, -h, --help\e[39m         Display this help message"

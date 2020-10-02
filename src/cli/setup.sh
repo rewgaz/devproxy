@@ -17,11 +17,11 @@ setup() {
                 chcon -Rt svirt_sandbox_file_t "$dir_build"
             fi;
             docker run -it --rm \
-                --name http-gateway-builder \
-                -v "$dir_src":/usr/src/http-gateway-src \
-                -v "$dir_config":/usr/src/http-gateway-config \
-                -v "$dir_build":/usr/src/http-gateway-build \
-                -w /usr/src/http-gateway-src \
+                --name http-devproxy-builder \
+                -v "$dir_src":/usr/src/http-devproxy-src \
+                -v "$dir_config":/usr/src/http-devproxy-config \
+                -v "$dir_build":/usr/src/http-devproxy-build \
+                -w /usr/src/http-devproxy-src \
                 python:3 python builder.py
             \cp -r "$dir_build"/conf.d /etc/nginx/
             \cp -r "$dir_src"/html /usr/share/nginx/

@@ -5,10 +5,10 @@ import os
 import shutil
 
 
-path_config = '/usr/src/http-gateway-config'
-path_build = '/usr/src/http-gateway-build'
-path_hosts = '/usr/src/http-gateway-build/hosts'
-hosts_separator = '### http-gateway ###'
+path_config = '/usr/src/http-devproxy-config'
+path_build = '/usr/src/http-devproxy-build'
+path_hosts = '/usr/src/http-devproxy-build/hosts'
+hosts_separator = '### http-devproxy ###'
 
 template_location = '''location / {{
         proxy_pass {protocol}://{ip}:{port}/;
