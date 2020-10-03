@@ -3,6 +3,9 @@
 # exit on error
 set -e
 
+# prevent source files from being executed individually
+DEVPROXY_COMMAND=1
+
 # command parameter
 param_command="$1"
 
@@ -15,7 +18,7 @@ base_dir="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" >/dev/null 2>&1 &&
 # load source files
 source "$base_dir/cli/cert.sh"
 source "$base_dir/cli/setup.sh"
-source "$base_dir/cli/save.sh"
+source "$base_dir/cli/apply.sh"
 source "$base_dir/cli/util.sh"
 
 # check for a command
@@ -28,25 +31,32 @@ fi
 
 # execute the command
 case "$param_command" in
+
     "setup")
         setup
     ;;
-    "save")
-        save "$base_dir/src" "$base_dir/config" "$base_dir/build"
+
+    "apply")
+        apply "$base_dir/src" "$base_dir/config" "$base_dir/build"
     ;;
+
     "cert:create")
         cert_create "$param_option"
     ;;
+
     "cert:renew")
         cert_renew
     ;;
+
     "cert:cockpit")
         cert_cockpit "$param_option"
     ;;
+
     "help"|"--help"|"-h")
         print_help
         exit
         ;;
+
     *)
         echo "Unknown command '${param_command}'."
         print_help

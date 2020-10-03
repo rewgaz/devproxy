@@ -1,14 +1,26 @@
-save() {
+#!/bin/bash
+
+[ -v ${DEVPROXY_COMMAND} ] && exit 1
+
+# apply routine
+apply() {
+
+    # start apply routine
+    echo "Applying configuration to system..."
+
     dir_src="$1"
     dir_config="$2"
     dir_build="$3"
-    distribution=$(get_distribution)
-
+    
     mkdir -p "$dir_build"
     \cp /etc/hosts "$dir_build"/hosts
     \cp /etc/hosts /etc/hosts~"$(date +%s)"
 
+    # choose active distribution/system
+    distribution=$(get_distribution)
     case "$distribution" in
+
+        # centos / fedora
         centos|fedora)
             selinux_status=$(getenforce)
             if [ "$selinux_status" == "Permissive" ] || [ "$selinux_status" == "Enforcing" ]; then
@@ -29,17 +41,20 @@ save() {
             systemctl restart nginx
             \cp "$dir_build"/hosts /etc/hosts
         ;;
-        rhel|ol|sles)
-            echo "Operating system not supported."
-            exit 1
-        ;;
+
+        # ubuntu / debian / raspbian
         ubuntu|debian|raspbian)
             echo "Operating system not supported."
             exit 1
         ;;
+
+        # none of the above
         *)
             echo "Operating system not supported."
             exit 1
         ;;
     esac
+
+    # apply complete
+    echo "...complete!"
 }
