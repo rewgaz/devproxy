@@ -5,9 +5,9 @@ import os
 import shutil
 
 
-path_config = '/usr/src/http-devproxy-config'
-path_build = '/usr/src/http-devproxy-build'
-path_hosts = '/usr/src/http-devproxy-build/hosts'
+path_config = '/etc/devproxy/config'
+path_build = '/usr/local/src/devproxy/build'
+path_hosts = '/usr/local/src/devproxy/build/hosts'
 hosts_separator = '### http-devproxy ###'
 
 template_location = '''location / {{

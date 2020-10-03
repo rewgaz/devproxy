@@ -36,7 +36,7 @@ devproxy setup
 
 ## Setup - Step 2: Host configuration
 
-Put a config file for each host in the `config` folder and name it for example `my-website.com.json`. Only JSON files with the suffix `.json` will be read.
+Put a config file for each host in the `/etc/devproxy/config` directory and name it for example `my-website.com.json`. Only JSON files with the suffix `.json` will be read.
 
 ### Example
 
@@ -83,8 +83,7 @@ https://www.my-website.com -> (proxy_pass) -> https://0.0.0.0:14010
 
 ## Setup - Step 3: Save config
 
-The `save` command parses all config files and creates all necessary NGINX config files and adds hostnames to your `/etc/hosts` file.
-Rerun this command after you changed any config files or added/renewed any SSL certificates.
+The `save` command parses all config files and creates all necessary NGINX config files and adds the hostnames to your `/etc/hosts` file. (A copy of the old `/etc/hosts` file will be saved to `/etc/devproxy/hosts-backup`.) Rerun this command after you changed any config files or added/renewed any SSL certificates.
 
 ```bash
 devproxy save

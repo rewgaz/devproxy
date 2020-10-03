@@ -21,5 +21,8 @@ jobs:
         env:
           CI_TASK_RUNNER: github
 
+      - name: Apply configuration
+        run: sudo devproxy apply
+
       - name: Uninstall application
         run: sudo make uninstall

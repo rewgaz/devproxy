@@ -8,7 +8,7 @@ default:
 
 install:
 	@echo "Install..."
-	mkdir -p /etc/devproxy/hosts
+	mkdir -p /etc/devproxy/config
 	cp -r src /usr/local/src/devproxy
 	chmod +x /usr/local/src/devproxy/devproxy
 	ln -sf /usr/local/src/devproxy/devproxy /usr/local/bin/devproxy

@@ -8,13 +8,22 @@ apply() {
     # start apply routine
     echo "Applying configuration to system..."
 
-    dir_src="$1"
-    dir_config="$2"
-    dir_build="$3"
+    # source directory
+    dir_src="$base_dir"
+
+    # config directory
+    dir_config="/etc/devproxy/config"
     
-    mkdir -p "$dir_build"
-    \cp /etc/hosts "$dir_build"/hosts
-    \cp /etc/hosts /etc/hosts~"$(date +%s)"
+    # create build directory in source directory
+    rm -rf "$dir_src"/build
+    mkdir -p "$dir_src"/build
+
+    # copy /etc/hosts to build directory
+    \cp /etc/hosts "$dir_src"/build/hosts
+
+    # make a copy of the old /etc/hosts file to /etc/devproxy/hosts-backup
+    mkdir -p /etc/devproxy/hosts-backup
+    \cp /etc/hosts /etc/devproxy/hosts-backup/hosts~"$(date +%s)"
 
     # choose active distribution/system
     distribution=$(get_distribution)
@@ -22,30 +31,21 @@ apply() {
 
         # centos / fedora
         centos|fedora)
+
+            # check for selinux status
             selinux_status=$(getenforce)
+            
+            # set security context type of source folders if necessary
             if [ "$selinux_status" == "Permissive" ] || [ "$selinux_status" == "Enforcing" ]; then
                 chcon -Rt svirt_sandbox_file_t "$dir_src"
                 chcon -Rt svirt_sandbox_file_t "$dir_config"
-                chcon -Rt svirt_sandbox_file_t "$dir_build"
             fi;
-            docker run -it --rm \
-                --name http-devproxy-builder \
-                -v "$dir_src":/usr/src/http-devproxy-src \
-                -v "$dir_config":/usr/src/http-devproxy-config \
-                -v "$dir_build":/usr/src/http-devproxy-build \
-                -w /usr/src/http-devproxy-src \
-                python:3 python builder.py
-            \cp -r "$dir_build"/conf.d /etc/nginx/
-            \cp -r "$dir_src"/html /usr/share/nginx/
-            \cp -r "$dir_build"/ssl /etc/nginx/ssl_cert
-            systemctl restart nginx
-            \cp "$dir_build"/hosts /etc/hosts
         ;;
 
         # ubuntu / debian / raspbian
         ubuntu|debian|raspbian)
-            echo "Operating system not supported."
-            exit 1
+            
+            # nothing to do
         ;;
 
         # none of the above
@@ -54,6 +54,24 @@ apply() {
             exit 1
         ;;
     esac
+
+    # run config builder
+    python3 "$dir_src"/builder/builder.py
+    
+    # copy conf.d config to /etc/nginx
+    \cp -r "$dir_src"/build/conf.d /etc/nginx/
+
+    # copy html error pages to nginx
+    \cp -r "$dir_src"/html /usr/share/nginx/
+
+    # copy self-signed ssl certificates to nginx
+    \cp -r "$dir_src"/build/ssl /etc/nginx/ssl_cert
+
+    # overwrite /etc/hosts with appended host names
+    \cp "$dir_src"/build/hosts /etc/hosts
+
+    # restart nginx
+    systemctl restart nginx
 
     # apply complete
     echo "...complete!"

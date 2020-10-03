@@ -24,7 +24,6 @@ source "$base_dir/cli/util.sh"
 # check for a command
 if [[ -z ${param_command} ]]; then
     echo "Please specify a command."
-    echo ""
     print_help
     exit 1
 fi
@@ -37,7 +36,7 @@ case "$param_command" in
     ;;
 
     "apply")
-        apply "$base_dir/src" "$base_dir/config" "$base_dir/build"
+        apply
     ;;
 
     "cert:create")
@@ -55,7 +54,7 @@ case "$param_command" in
     "help"|"--help"|"-h")
         print_help
         exit
-        ;;
+    ;;
 
     *)
         echo "Unknown command '${param_command}'."
