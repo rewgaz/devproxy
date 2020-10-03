@@ -27,7 +27,7 @@ Install devproxy:
 make install
 ```
 
-The setup command disables a potentially running `Apache Webserver`, installs `NGINX`, `Docker`, `docker-compose` and `certbot`.
+The setup command disables a potentially running `Apache Webserver` and installs `NGINX` and `certbot`.
 It also opens port `80` and `443` in your firewall if necessary.
 
 ```bash
@@ -81,12 +81,12 @@ https://alternative.my-website.com -> (301) -> https://www.my-website.com
 https://www.my-website.com -> (proxy_pass) -> https://0.0.0.0:14010
 ```
 
-## Setup - Step 3: Save config
+## Setup - Step 3: Apply config
 
-The `save` command parses all config files and creates all necessary NGINX config files and adds the hostnames to your `/etc/hosts` file. (A copy of the old `/etc/hosts` file will be saved to `/etc/devproxy/hosts-backup`.) Rerun this command after you changed any config files or added/renewed any SSL certificates.
+The `apply` command parses all config files and creates all necessary NGINX config files and adds the hostnames to your `/etc/hosts` file. (A copy of the old `/etc/hosts` file will be saved to `/etc/devproxy/hosts-backup`.) Rerun this command after you changed any config files or added/renewed any SSL certificates.
 
 ```bash
-devproxy save
+devproxy apply
 ```
 
 ## SSL certificates
