@@ -57,12 +57,7 @@ setup() {
             dnf -y update
 
             # install packages
-            dnf -y install docker docker-compose nginx certbot
-            
-            # start/enable docker if command is not run by a CI task
-            if [[ -v ${CI_TASK_RUNNER} ]]; then
-                setup_enable_service docker
-            fi
+            dnf -y install nginx certbot
 
             # disable httpd service
             setup_disable_service httpd
@@ -86,12 +81,7 @@ setup() {
             apt-get -y upgrade
 
             # install packages
-            apt-get -y install docker docker-compose nginx certbot
-
-            # start/enable docker if command is not run by a CI task
-            if [[ -v ${CI_TASK_RUNNER} ]]; then
-                setup_enable_service docker
-            fi
+            apt-get -y install nginx certbot
 
             # disable apache2 service
             setup_disable_service apache2
